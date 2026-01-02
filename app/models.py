@@ -39,7 +39,7 @@ def fetch_events(start_date=None, end_date=None):
 def get_artists_for_event(event_id):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("SELECT artist_id FROM event_artists WHERE event_id=?", (event_id,))
+    cur.execute("SELECT artist_id FROM event_artists WHERE event_id=?:", (event_id,))
     rows = cur.fetchall()
     conn.close()
     return [r[0] for r in rows]
@@ -58,9 +58,10 @@ def create_event(title, date_iso, format_id, promoter_id, notes, artist_ids):
 def update_event(eid, title, date_iso, format_id, promoter_id, notes, artist_ids):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("UPDATE events SET title=?, date=?, format_id=?, promoter_id=?, notes=? WHERE id=?",
+    cur.execute("UPDATE events SET title=?, date=?, format_id=?, promoter_id=?, notes=? WHERE id=??",
                 (title, date_iso, format_id, promoter_id, notes, eid))
-    cur.execute("DELETE FROM event_artists WHERE event_id=", (eid,))
+    # correct placeholder for delete
+    cur.execute("DELETE FROM event_artists WHERE event_id=?", (eid,))
     for aid in artist_ids:
         cur.execute("INSERT INTO event_artists (event_id, artist_id) VALUES (?,?)", (eid, aid))
     conn.commit()
@@ -69,8 +70,8 @@ def update_event(eid, title, date_iso, format_id, promoter_id, notes, artist_ids
 def delete_event(eid):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("DELETE FROM event_artists WHERE event_id=", (eid,))
-    cur.execute("DELETE FROM event_people WHERE event_id=", (eid,))
-    cur.execute("DELETE FROM events WHERE id=", (eid,))
+    cur.execute("DELETE FROM event_artists WHERE event_id=?", (eid,))
+    cur.execute("DELETE FROM event_people WHERE event_id=?", (eid,))
+    cur.execute("DELETE FROM events WHERE id=?", (eid,))
     conn.commit()
     conn.close()
