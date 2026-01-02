@@ -1,0 +1,4 @@
+streamlit>=1.25
+werkzeug>=2.2
+pandas
+python-dateutil
