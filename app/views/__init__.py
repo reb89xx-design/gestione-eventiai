@@ -1,1 +1,1 @@
-from . import calendar, events
+from . import calendar, events, structure, artists, formats, people
